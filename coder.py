@@ -9,7 +9,7 @@ class CodePrinter:
     PRINT_SPEED = 280           # speed in characters per minute
     SPEED_VARIABILITY = 0.1     # speed variability for each character
     REPEATED_SYMBOL_SPEED = 1200
-    SPEED_MULTIPLIER = 20
+    SPEED_MULTIPLIER = 200
     SEPARATOR_SYMBOLS = ''
 
     @property
@@ -52,6 +52,6 @@ class CodePrinter:
 
                 sleep(self.char_delay if symbol != __prev_symbol else self.repeated_char_delay)
 
-                if self.syntax.highlight(symbol):
+                self.syntax.highlight(symbol)
+                if self.syntax.end_of_word:
                     print(self.syntax.output, end='', flush=True)
-                    self.__buffer = ''
