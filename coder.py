@@ -1,3 +1,4 @@
+import re
 import math
 import random
 from time import sleep
@@ -6,10 +7,10 @@ from coloring import SyntaxHighlighter
 
 
 class CodePrinter:
-    PRINT_SPEED = 280           # speed in characters per minute
-    SPEED_VARIABILITY = 0.1     # speed variability for each character
+    PRINT_SPEED = 600           # speed in characters per minute
+    SPEED_VARIABILITY = 0.5     # speed variability for each character
     REPEATED_SYMBOL_SPEED = 1200
-    SPEED_MULTIPLIER = 200
+    SPEED_MULTIPLIER = 1
     SEPARATOR_SYMBOLS = ''
 
     @property
@@ -35,17 +36,33 @@ class CodePrinter:
 
         return self.__repeated_char_delay
 
-    def __init__(self, file_path):
-        self.syntax = SyntaxHighlighter()
+    @property
+    def file_path(self):
+        return self.__file_path
 
-        with open(file_path, 'r') as file:
-            self.code = file.readlines()
+    @file_path.setter
+    def file_path(self, value):
+        if value:
+            try:
+                with open(value, 'r') as file:
+                    self.code = file.readlines()
+            except:
+                raise
+
+        self.__file_path = value
+
+    def __init__(self, file_path=None):
+        self.syntax = SyntaxHighlighter()
+        self.file_path = file_path
 
     def print(self):
         __prev_symbol = ''
 
         for line in self.code:
             sleep(0.05)
+
+            line = re.sub(r'(?<=^)(\t)|(?<=\t)(\t)', r'    ', line)
+            line = re.sub(r'\t', r' ', line)
 
             for symbol in line:
                 print(symbol, end='', flush=True)
